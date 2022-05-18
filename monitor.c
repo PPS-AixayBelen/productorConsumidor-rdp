@@ -17,7 +17,7 @@ void logInvariantePlaza(int *vectorMarcado, int size)
 
 void logInvarianteTransicion(monitor_o *monitor, int index)
 {
-    char *transicion[] =  {"T0", "T4", "T11", "T3", "T10", "TA", "T12", "T13", "T14", "T2", "T5", "T6", "T7", "T8", "T9"};
+    char *transicion[] =  {"T0", "T1", "T2", "T3"};
     if(monitor->logInvTransicion == NULL)
     {
         monitor->logInvTransicion = (char*) malloc(sizeof(char)*strlen(transicion[index]));
@@ -32,10 +32,10 @@ void logInvarianteTransicion(monitor_o *monitor, int index)
 
 void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para terminar la ejecucion
 {
-
+    printf("\n\nPASE POR ACA\n");
     for (int i = 0; i < TRANSITIONS; i++)
     {
-        pthread_cond_signal(&(monitor->espera[i]));
+        pthread_cond_broadcast(&(monitor->espera[i]));
         monitor->boolQuesWait[i] = 0;
     }
 }
@@ -60,7 +60,7 @@ void signalPoliticMonitor(monitor_o *monitor) //define que hilo tiene que desper
         // for (int i = 0; i < TRANSITIONS; i++){
         //     pthread_cond_broadcast(&(monitor->espera[i])); //por si algun hilo quedo dormido
         // }
-
+        
         finalSignalPolitic(monitor); 
     }
 
@@ -91,16 +91,17 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
                 pthread_mutex_unlock(&(monitor->mutex));
                 return -1;
             }
+
             if(DEBUG)
                 printf("me fui a dormir disparando %d, con shootResult = %d\n", index, shootResult);
-            monitor->boolQuesWait[index] = 1; //se setea un 1 en la transicion en la que se durmio el hilo
+            monitor->boolQuesWait[index] += 1; //se setea un 1 en la transicion en la que se durmio el hilo
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }
         else if (shootResult == 0)
         {
             logInvariantePlaza(&monitor->rdp->M[0], PLACES);
             logInvarianteTransicion(monitor,index);
-            monitor->boolQuesWait[index] = 0; //porque en este caso solo puede haber un hilo dormido por transicion
+            monitor->boolQuesWait[index] -= 1; //porque en este caso solo puede haber un hilo dormido por transicion
             signalPoliticMonitor(monitor); //despierto al proximo hilo
             break;
         }
