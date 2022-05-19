@@ -5,10 +5,9 @@
 int signalPolitic(politica_o *politica, int *boolQuesWait)
 {
 
-    //TODO: Revisar
     int *aux = politica->rdp->Sensitized;
 
-    for (int i = 0; i < TRANSITIONS; i++){ //desperta al primero que encuentre dormido
+    for ( int i=0; i < TRANSITIONS; i++){ //desperta al primero que encuentre dormido
         if(aux[i] == 1 && (boolQuesWait[i]>0) ){
             return i;
         }
@@ -25,7 +24,6 @@ struct politica_metodos politicaMetodos = {
 extern void new_politica(politica_o *p_politica, rdp_o *rdp)
 {
     p_politica->rdp = rdp;
-
     p_politica->markVector = p_politica->rdp->M;
     p_politica->metodos = &politicaMetodos;
 }

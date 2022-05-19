@@ -149,8 +149,6 @@ int isPos(rdp_o *rdp, int *index)
     }
     if (DEBUG)
     {
-        // printf("Viejo sensiblizado : ");
-        // printArray(TRANSITIONS,  oldSens);
         printf("Nuevo sensiblizado : ");
         printArray(TRANSITIONS, rdp->Sensitized);
     }
@@ -173,11 +171,15 @@ void printArray(int size, int array[])
 int ifEnd(rdp_o *rdp) //determina si ya volvi al marcado inicial y se generaron todos los paquetes requeridos
 {
     int Minitial[PLACES] = {3,2,5,0,0,1,0};
+
     for (int n = 0; n < PLACES; n++)
-    {
+    {  
         if (rdp->M[n] != Minitial[n])
+        {
             return 0;
+        }
     }
+
     if (rdp->packetCounter == rdp->dataNumber)
     {
         return 1;
