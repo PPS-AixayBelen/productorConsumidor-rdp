@@ -11,6 +11,7 @@ int isPos(rdp_o *rdp, int *index);
 void updateTimeStamps(rdp_o *rdp, int *oldSens);
 void getSensitized(rdp_o *rdp);
 int ifEnd(rdp_o *rdp);
+void cleanRDP(rdp_o *rdp);
 
 void printArray(int size, int array[]);
 void logInvariantePlaza(int *vectorMarcado, int size);
@@ -18,7 +19,9 @@ void logInvariantePlaza(int *vectorMarcado, int size);
 struct rdp_metodos rdpMetodos = {
 
     .isPos = isPos,
-    .ifEnd = ifEnd};
+    .ifEnd = ifEnd,
+    .cleanRDP = cleanRDP
+    };
 
 extern int new_rdp(rdp_o *p_rdp)
 {
@@ -39,6 +42,11 @@ extern int new_rdp(rdp_o *p_rdp)
         p_rdp->Sensitized[i] = 0;
 
     p_rdp->metodos = &rdpMetodos;
+}
+
+void cleanRDP(rdp_o *rdp)
+{
+    rdp->M.v_methods->free_vector(&rdp->M);
 }
 
 int isPos(rdp_o *rdp, int *index)

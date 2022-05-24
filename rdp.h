@@ -18,6 +18,7 @@ struct rdp_metodos
 
     int (*isPos)(rdp_o *, int *index);
     int (*ifEnd)(rdp_o *);
+    void (*cleanRDP)(rdp_o *);
 };
 
 struct rdp{

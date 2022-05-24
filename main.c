@@ -71,10 +71,5 @@ int main()
     if (DEBUG)
         printf("\nFinalizo la ejecucion\n");
         
-    // FILE * invTransicionFile = fopen("./test/InvarianteTransicion","w+");
-    // fputs(monitor->logInvTransicion,invTransicionFile);
-    // fclose(invTransicionFile);
-
-    // free(monitor->politica);
-    // free(monitor->logInvTransicion);
+    rdp.metodos->cleanRDP(&rdp);
 }
