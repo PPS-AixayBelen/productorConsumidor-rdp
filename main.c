@@ -61,7 +61,7 @@ int main()
     }
 
     for (int i = 0; i < (PRODUCTOR + CONSUMIDOR); i++)
-        pthread_create(&c[i], &atrib,(&tShooter[i])->metodos->run , (cpuProcess_o *) &tShooter[i]);
+        pthread_create(&c[i], &atrib,(void*)(&tShooter[i])->metodos->run , (cpuProcess_o *) &tShooter[i]);
 
     for (int i = 0; i < (PRODUCTOR + CONSUMIDOR); i++){
         pthread_join(c[i], NULL);

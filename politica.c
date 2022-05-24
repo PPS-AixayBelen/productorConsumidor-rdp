@@ -24,6 +24,6 @@ struct politica_metodos politicaMetodos = {
 extern void new_politica(politica_o *p_politica, rdp_o *rdp)
 {
     p_politica->rdp = rdp;
-    p_politica->markVector = p_politica->rdp->M;
+    p_politica->markVector = p_politica->rdp->M.vector;
     p_politica->metodos = &politicaMetodos;
 }

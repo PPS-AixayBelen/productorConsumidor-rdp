@@ -20,13 +20,17 @@ struct rdp_metodos rdpMetodos = {
     .isPos = isPos,
     .ifEnd = ifEnd};
 
-extern void new_rdp(rdp_o *p_rdp)
+extern int new_rdp(rdp_o *p_rdp)
 {
     p_rdp->dataNumber = 10; //cant max de paquetes a generar
     p_rdp->packetCounter = 0; //contador de paquetes generados hasta el momento por T0
 
     char M[] = "3 2 5 0 0 1 0"; //marcado inicial
-    cargar_vector(PLACES, p_rdp->M, M); 
+    if(new_vector(&p_rdp->M,PLACES) == -1)
+    {
+        return -1;
+    }
+    cargar_vector(PLACES, p_rdp->M.vector, M); 
     leer_matriz(PLACES, TRANSITIONS, p_rdp->Ineg[0], "Ineg");
     leer_matriz(PLACES, TRANSITIONS, p_rdp->Ipos[0], "Ipos");
     leer_matriz(PLACES, TRANSITIONS, p_rdp->I[0], "Imatriz"); // Matriz de incidencia (N x M)
@@ -51,7 +55,7 @@ int isPos(rdp_o *rdp, int *index)
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M[n] - rdp->Ineg[n][m] < 0)
+            if (rdp->M.vector[n] - rdp->Ineg[n][m] < 0)
             {
                 rdp->Sensitized[m] = 0;
                 break;
@@ -108,7 +112,7 @@ int isPos(rdp_o *rdp, int *index)
         printf("Nuevo marcado: \n");
     for (int n = 0; n < PLACES; n++) // Si algun numero del nuevo vector de marcado es negativo, no puedo dispararla
     {                                    
-        mPrima[n] = rdp->M[n] + aux2[n]; // Sumo para obtener el nuevo vector de marcado
+        mPrima[n] = rdp->M.vector[n] + aux2[n]; // Sumo para obtener el nuevo vector de marcado
         if (DEBUG)
             printf("%d %s \n", mPrima[n], M_name[n]);
 
@@ -122,7 +126,7 @@ int isPos(rdp_o *rdp, int *index)
     
     for (int i = 0; i < PLACES; i++)
     {
-        rdp->M[i] = mPrima[i];
+        rdp->M.vector[i] = mPrima[i];
     }
 
 
@@ -140,7 +144,7 @@ int isPos(rdp_o *rdp, int *index)
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M[n] - rdp->Ineg[n][m] < 0)
+            if (rdp->M.vector[n] - rdp->Ineg[n][m] < 0)
             {
                 rdp->Sensitized[m] = 0;
                 break;
@@ -174,7 +178,7 @@ int ifEnd(rdp_o *rdp) //determina si ya volvi al marcado inicial y se generaron 
 
     for (int n = 0; n < PLACES; n++)
     {  
-        if (rdp->M[n] != Minitial[n])
+        if (rdp->M.vector[n] != Minitial[n])
         {
             return 0;
         }

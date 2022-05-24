@@ -1,5 +1,6 @@
 #ifndef _RDP_
 #define _RDP_
+#include "dataStructures.h"
 #include "time.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +22,7 @@ struct rdp_metodos
 
 struct rdp{
    
-    int M[PLACES]; 
+    o_vector M; 
     int B[TRANSITIONS]; 
     int Ipos[PLACES][TRANSITIONS]; 
     int Ineg[PLACES][TRANSITIONS]; 
@@ -39,6 +40,6 @@ struct rdp{
 
 // Funciones
 
-void new_rdp(rdp_o *p_rdp);
+int new_rdp(rdp_o *p_rdp);
 
 #endif
