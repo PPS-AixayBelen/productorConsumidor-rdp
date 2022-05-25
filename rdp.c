@@ -33,13 +33,19 @@ extern int new_rdp(rdp_o *p_rdp)
     {
         return -1;
     }
+
+        if(new_vector(&p_rdp->Sensitized,TRANSITIONS) == -1)
+    {
+        return -1;
+    }
     cargar_vector(PLACES, p_rdp->M.vector, M); 
     leer_matriz(PLACES, TRANSITIONS, p_rdp->Ineg[0], "Ineg");
     leer_matriz(PLACES, TRANSITIONS, p_rdp->Ipos[0], "Ipos");
     leer_matriz(PLACES, TRANSITIONS, p_rdp->I[0], "Imatriz"); // Matriz de incidencia (N x M)
 
+    //TODO: Pasar a funcion que inicialice?
     for(int i = 0; i < TRANSITIONS; i++)
-        p_rdp->Sensitized[i] = 0;
+        p_rdp->Sensitized.vector[i] = 0;
 
     p_rdp->metodos = &rdpMetodos;
 }
@@ -47,6 +53,7 @@ extern int new_rdp(rdp_o *p_rdp)
 void cleanRDP(rdp_o *rdp)
 {
     rdp->M.v_methods->free_vector(&rdp->M);
+    rdp->Sensitized.v_methods->free_vector(&rdp->Sensitized);
 }
 
 int isPos(rdp_o *rdp, int *index)
@@ -59,13 +66,13 @@ int isPos(rdp_o *rdp, int *index)
     // Calculo E (vector de sensibilizado)
     for (int m = 0; m < TRANSITIONS; m++)
     {
-        rdp->Sensitized[m] = 1;
+        rdp->Sensitized.vector[m] = 1;
 
         for (int n = 0; n < PLACES; n++)
         {
             if (rdp->M.vector[n] - rdp->Ineg[n][m] < 0)
             {
-                rdp->Sensitized[m] = 0;
+                rdp->Sensitized.vector[m] = 0;
                 break;
             }
         }
@@ -73,13 +80,13 @@ int isPos(rdp_o *rdp, int *index)
 
     // Limitacion de generacion de datos (T0)
     if (rdp->packetCounter == rdp->dataNumber) // Desensibiliza T0 si ya termino de generar paquetes
-        rdp->Sensitized[0] = 0;
+        rdp->Sensitized.vector[0] = 0;
 
     int aux[TRANSITIONS];
 
     for (int i = 0; i < TRANSITIONS; i++)
     {
-        aux[i] = rdp->Sensitized[i]; // Vector de sensibilizadas y no inhibidas
+        aux[i] = rdp->Sensitized.vector[i]; // Vector de sensibilizadas y no inhibidas
     }
 
     for (int m = 0; m < TRANSITIONS; m++)
@@ -148,13 +155,13 @@ int isPos(rdp_o *rdp, int *index)
     // updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
     for (int m = 0; m < TRANSITIONS; m++)
     {
-        rdp->Sensitized[m] = 1;
+        rdp->Sensitized.vector[m] = 1;
 
         for (int n = 0; n < PLACES; n++)
         {
             if (rdp->M.vector[n] - rdp->Ineg[n][m] < 0)
             {
-                rdp->Sensitized[m] = 0;
+                rdp->Sensitized.vector[m] = 0;
                 break;
             }
         }
@@ -162,7 +169,7 @@ int isPos(rdp_o *rdp, int *index)
     if (DEBUG)
     {
         printf("Nuevo sensiblizado : ");
-        printArray(TRANSITIONS, rdp->Sensitized);
+        printArray(TRANSITIONS, rdp->Sensitized.vector);
     }
 
     return 0;

@@ -70,6 +70,8 @@ int main()
    
     if (DEBUG)
         printf("\nFinalizo la ejecucion\n");
-        
+    
+    monitor->metodos->cleanMonitor(monitor);
     rdp.metodos->cleanRDP(&rdp);
+    
 }

@@ -24,13 +24,13 @@ struct rdp_metodos
 struct rdp{
    
     o_vector M; 
-    int B[TRANSITIONS]; 
+    o_vector Sensitized; 
     int Ipos[PLACES][TRANSITIONS]; 
     int Ineg[PLACES][TRANSITIONS]; 
     int I[PLACES][TRANSITIONS];  
     int H[TRANSITIONS][PLACES]; 
     int E[TRANSITIONS]; 
-    int Sensitized[TRANSITIONS]; 
+   
 
     int dataNumber;
     int packetCounter; // Es boolean

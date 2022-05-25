@@ -5,7 +5,7 @@
 int signalPolitic(politica_o *politica, int *boolQuesWait)
 {
 
-    int *aux = politica->rdp->Sensitized;
+    int *aux = politica->rdp->Sensitized.vector;
 
     for ( int i=0; i < TRANSITIONS; i++){ //desperta al primero que encuentre dormido
         if(aux[i] == 1 && (boolQuesWait[i]>0) ){

@@ -30,6 +30,11 @@ void logInvarianteTransicion(monitor_o *monitor, int index)
     }
 }
 
+void cleanMonitor(monitor_o *monitor){
+    free(monitor->politica);
+    free(monitor->logInvTransicion);
+}
+
 void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para terminar la ejecucion
 {
     for (int i = 0; i < TRANSITIONS; i++)
@@ -123,7 +128,8 @@ struct monitor_metodos monitorMetodos = {
 
     .signalPoliticMonitor = signalPoliticMonitor,
     .finalSignalPolitic = finalSignalPolitic,
-    .shoot = shoot};
+    .shoot = shoot,
+    .cleanMonitor = cleanMonitor};
 
 extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
 {

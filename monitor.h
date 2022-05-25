@@ -16,6 +16,7 @@ struct monitor_metodos
     void (*signalPoliticMonitor)(monitor_o *);
     void (*finalSignalPolitic)(monitor_o *);
     int (*shoot)(monitor_o *, int index);
+    void (*cleanMonitor)(monitor_o*);
 };
 
 struct monitor
