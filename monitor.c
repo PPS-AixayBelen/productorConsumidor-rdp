@@ -20,12 +20,12 @@ void logInvarianteTransicion(monitor_o *monitor, int index)
     char *transicion[] = {"T0", "T1", "T2", "T3"};
     if (monitor->logInvTransicion == NULL)
     {
-        monitor->logInvTransicion = (char *)malloc(sizeof(char) * strlen(transicion[index]));
+        monitor->logInvTransicion = (char *)malloc(sizeof(char) * strlen(transicion[index]+1));
         strcpy(monitor->logInvTransicion, transicion[index]);
     }
     else
     {
-        monitor->logInvTransicion = (char *)realloc(monitor->logInvTransicion, sizeof(char) * (strlen(monitor->logInvTransicion) + strlen(transicion[index])));
+        monitor->logInvTransicion = (char *)realloc(monitor->logInvTransicion, sizeof(char) * (strlen(monitor->logInvTransicion) +1+ strlen(transicion[index])));
         strcat(monitor->logInvTransicion, transicion[index]);
     }
 }
