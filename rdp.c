@@ -1,21 +1,15 @@
 #include "rdp.h"
 #include "leerMatriz.h"
 #include "time.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-
 
 int isPos(rdp_o *rdp, int *index);
 void updateTimeStamps(rdp_o *rdp, int *oldSens);
 void getSensitized(rdp_o *rdp);
 int ifEnd(rdp_o *rdp);
 void cleanRDP(rdp_o *rdp);
-
-void printArray(int size, int array[]);
 void logInvariantePlaza(int *vectorMarcado, int size);
 
 struct rdp_metodos rdpMetodos = {
@@ -65,7 +59,6 @@ int isPos(rdp_o *rdp, int *index)
 
     char *M_name[PLACES] = {"Consumidor", "Productor", "Huecos", "Produciendo", "Consumiendo", "Mutex", "Productos"};
 
-    // Calculo E (vector de sensibilizado)
     for (int m = 0; m < TRANSITIONS; m++)
     {
         rdp->Sensitized.vector[m] = 1;
@@ -171,23 +164,11 @@ int isPos(rdp_o *rdp, int *index)
     if (DEBUG)
     {
         printf("Nuevo sensiblizado : ");
-        printArray(TRANSITIONS, rdp->Sensitized.vector);
+        rdp->Sensitized.v_methods->print(rdp->Sensitized);
     }
 
     return 0;
 }
-
-void printArray(int size, int array[])
-{
-    printf("{ ");
-    for (int i = 0; i < size; i++)
-    {   
-        printf("%d ", array[i]);
-    }
-    printf("}\n");
-}
-
-
 
 int ifEnd(rdp_o *rdp) //determina si ya volvi al marcado inicial y se generaron todos los paquetes requeridos
 {

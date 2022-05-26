@@ -3,12 +3,13 @@
 
 int alloc_vector(o_vector * p_vector);
 int free_vector(o_vector *p_vector);
-
+void print(o_vector p_vector);
 
 
 struct vector_methods v_methods ={
     .alloc_vector = alloc_vector,
-    .free_vector = free_vector
+    .free_vector = free_vector,
+    .print = print
     };
 
 int alloc_vector(o_vector * p_vector){
@@ -22,6 +23,17 @@ int alloc_vector(o_vector * p_vector){
     p_vector->vector = p_v;
     return 0;
 }
+
+void print(o_vector p_vector)
+{
+    printf("{ ");
+    for (int i = 0; i < p_vector.size; i++)
+    {   
+        printf("%d ", p_vector.vector[i]);
+    }
+    printf("}\n");
+}
+
 
 int free_vector(o_vector *p_vector){
     free(p_vector->vector);
