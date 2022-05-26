@@ -52,7 +52,7 @@ int main()
         new_cpuProcess(&tShooter[i], shootArray[0], 2, monitor, i);
     }
 
-        for (int i = 2; i < 5;i++)
+        for (int i = PRODUCTOR; i < PRODUCTOR+CONSUMIDOR;i++)
     {
         new_cpuProcess(&tShooter[i], shootArray[1], 2, monitor, i);
     }
