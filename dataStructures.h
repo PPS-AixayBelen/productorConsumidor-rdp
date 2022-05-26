@@ -3,7 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#define ALLOC_ERROR -1
+#define ALLOC_OK 0
+
 typedef struct vector o_vector;
+typedef struct matriz o_matriz;
 
 struct vector_methods{
     int (*alloc_vector)(o_vector *);
@@ -19,6 +24,19 @@ struct vector{
     const struct vector_methods * v_methods;
 };
 
+struct matriz_methods{
+    int (*alloc_matriz)(o_matriz *);
+	int (*free_matriz)(o_matriz *);
+};
+
+struct matriz{
+    int **matriz;
+    int filas;
+    int columnas;
+    struct matriz_methods * metodos;
+};
+
 extern int new_vector(o_vector * p_v, int v_size);
+extern int new_matriz(o_matriz * p_m , int columnas, int filas);
 
 #endif
