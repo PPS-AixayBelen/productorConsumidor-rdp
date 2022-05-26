@@ -11,13 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PRODUCTOR 2
-#define CONSUMIDOR 3
 
 
 int main()
 {
-    
     pthread_attr_t atrib;
     pthread_t c[5];
 
@@ -52,16 +49,18 @@ int main()
 
     for (int i = 0; i < PRODUCTOR;i++)
     {
-        new_cpuProcess(&tShooter[i], shootArray[0], 2, monitor);
+        new_cpuProcess(&tShooter[i], shootArray[0], 2, monitor, i);
     }
 
-        for (int i = 2; i <5;i++)
+        for (int i = 2; i < 5;i++)
     {
-        new_cpuProcess(&tShooter[i], shootArray[1], 2, monitor);
+        new_cpuProcess(&tShooter[i], shootArray[1], 2, monitor, i);
     }
 
     for (int i = 0; i < (PRODUCTOR + CONSUMIDOR); i++)
         pthread_create(&c[i], &atrib,(void*)(&tShooter[i])->metodos->run , (cpuProcess_o *) &tShooter[i]);
+
+
 
     for (int i = 0; i < (PRODUCTOR + CONSUMIDOR); i++){
         pthread_join(c[i], NULL);

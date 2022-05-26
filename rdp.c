@@ -7,6 +7,8 @@
 #include <string.h>
 
 
+
+
 int isPos(rdp_o *rdp, int *index);
 void updateTimeStamps(rdp_o *rdp, int *oldSens);
 void getSensitized(rdp_o *rdp);
@@ -25,7 +27,7 @@ struct rdp_metodos rdpMetodos = {
 
 extern int new_rdp(rdp_o *p_rdp)
 {
-    p_rdp->dataNumber = 10; //cant max de paquetes a generar
+    p_rdp->dataNumber = 5; //cant max de paquetes a generar
     p_rdp->packetCounter = 0; //contador de paquetes generados hasta el momento por T0
 
     char M[] = "3 2 5 0 0 1 0"; //marcado inicial
@@ -34,7 +36,7 @@ extern int new_rdp(rdp_o *p_rdp)
         return -1;
     }
 
-        if(new_vector(&p_rdp->Sensitized,TRANSITIONS) == -1)
+    if(new_vector(&p_rdp->Sensitized,TRANSITIONS) == -1)
     {
         return -1;
     }

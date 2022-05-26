@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PRODUCTOR 2
+#define CONSUMIDOR 3
+
 #define TRANSITIONS 4
 #define PLACES 7
 #define BUFFERS 2

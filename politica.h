@@ -8,7 +8,7 @@ typedef struct politica politica_o;
 struct politica_metodos
 {
 
-    int (*signalPolitic)(politica_o *, int *boolQuesWait);
+    int (*signalPolitic)(politica_o *, int *boolQuesWait, int index);
 };
 
 struct politica
