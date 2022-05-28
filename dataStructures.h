@@ -6,6 +6,8 @@
 
 #define ALLOC_ERROR -1
 #define ALLOC_OK 0
+#define READ_FILE_OK 0
+#define READ_FILE_ERROR -1
 
 typedef struct vector o_vector;
 typedef struct matriz o_matriz;
@@ -26,7 +28,8 @@ struct vector{
 
 struct matriz_methods{
     int (*alloc_matriz)(o_matriz *);
-	int (*free_matriz)(o_matriz *);
+	void (*free_matriz)(o_matriz *);
+    int (*cargar_matriz_file)(o_matriz *,char *);
 };
 
 struct matriz{

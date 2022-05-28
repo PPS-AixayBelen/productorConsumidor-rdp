@@ -35,7 +35,13 @@ extern int new_rdp(rdp_o *p_rdp)
         return ALLOC_ERROR;
     }
     cargar_vector(PLACES, p_rdp->M.vector, M); 
-    leer_matriz(PLACES, TRANSITIONS, p_rdp->Ineg[0], "Ineg");
+
+    if(new_matriz(&p_rdp->Ineg,PLACES,TRANSITIONS) == ALLOC_ERROR)
+    {
+        return ALLOC_ERROR;
+    }
+    p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->Ineg,"Ineg");
+
     leer_matriz(PLACES, TRANSITIONS, p_rdp->Ipos[0], "Ipos");
     leer_matriz(PLACES, TRANSITIONS, p_rdp->I[0], "Imatriz"); // Matriz de incidencia (N x M)
 
@@ -50,6 +56,7 @@ void cleanRDP(rdp_o *rdp)
 {
     rdp->M.v_methods->free_vector(&rdp->M);
     rdp->Sensitized.v_methods->free_vector(&rdp->Sensitized);
+    rdp->Ineg.metodos->free_matriz(&rdp->Ineg);
 }
 
 int isPos(rdp_o *rdp, int *index)
@@ -65,7 +72,7 @@ int isPos(rdp_o *rdp, int *index)
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M.vector[n] - rdp->Ineg[n][m] < 0)
+            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0) //TODO: Rompe aca
             {
                 rdp->Sensitized.vector[m] = 0;
                 break;
@@ -147,14 +154,13 @@ int isPos(rdp_o *rdp, int *index)
             printf("\nNuevo paquete ahora tengo: %d\n",rdp->packetCounter);
     }
 
-    // updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
     for (int m = 0; m < TRANSITIONS; m++)
     {
         rdp->Sensitized.vector[m] = 1;
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M.vector[n] - rdp->Ineg[n][m] < 0)
+            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0)
             {
                 rdp->Sensitized.vector[m] = 0;
                 break;

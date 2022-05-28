@@ -29,7 +29,7 @@ struct rdp{
     o_vector M; 
     o_vector Sensitized; 
     int Ipos[PLACES][TRANSITIONS]; 
-    int Ineg[PLACES][TRANSITIONS]; 
+    o_matriz Ineg;
     int I[PLACES][TRANSITIONS];  
     int H[TRANSITIONS][PLACES]; 
     int E[TRANSITIONS]; 

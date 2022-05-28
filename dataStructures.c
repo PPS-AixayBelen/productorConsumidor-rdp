@@ -1,31 +1,33 @@
 #include "dataStructures.h"
 #include <stdlib.h>
 
-
-int alloc_vector(o_vector * p_vector);
+int alloc_vector(o_vector *p_vector);
 int free_vector(o_vector *p_vector);
 void print(o_vector p_vector);
 
-int alloc_matriz(o_matriz * p_matriz);
-int free_matriz(o_matriz *p_matriz);
+int alloc_matriz(o_matriz *p_matriz);
+void free_matriz(o_matriz *p_matriz);
+int cargar_matriz_file(o_matriz *p_matriz, char *nombreArchivo);
 
-struct vector_methods v_methods ={
+struct vector_methods v_methods = {
     .alloc_vector = alloc_vector,
     .free_vector = free_vector,
     .print = print
     };
 
-struct matriz_methods m_methods ={
+struct matriz_methods m_methods = {
     .alloc_matriz = alloc_matriz,
-    .free_matriz = free_matriz
+    .free_matriz = free_matriz,
+    .cargar_matriz_file = cargar_matriz_file
     };
 
+int alloc_vector(o_vector *p_vector)
+{
 
-int alloc_vector(o_vector * p_vector){
+    int *p_v = (int *)malloc(sizeof(int) * p_vector->size);
 
-    int * p_v = (int *) malloc(sizeof(int)*p_vector->size);
-
-    if(p_vector == NULL){
+    if (p_vector == NULL)
+    {
         return ALLOC_ERROR;
     }
 
@@ -37,31 +39,35 @@ void print(o_vector p_vector)
 {
     printf("{ ");
     for (int i = 0; i < p_vector.size; i++)
-    {   
+    {
         printf("%d ", p_vector.vector[i]);
     }
     printf("}\n");
 }
 
-
-int free_vector(o_vector *p_vector){
+int free_vector(o_vector *p_vector)
+{
     free(p_vector->vector);
 }
 
-int alloc_matriz(o_matriz * p_matriz)
+int alloc_matriz(o_matriz *p_matriz)
 {
-    int ** matriz = (int **) malloc(p_matriz->filas*sizeof(int*));
-    if(matriz==NULL)
+    int **matriz = (int **)malloc(p_matriz->filas * sizeof(int *));
+    if (matriz == NULL)
     {
         return ALLOC_ERROR;
     }
 
-    for(int i = 0;i<p_matriz->filas;i++)
+    for (int i = 0; i < p_matriz->filas; i++)
     {
-        matriz[i] = (int*) malloc(p_matriz->columnas*sizeof(int));
-        if(matriz[i]==NULL)
+        matriz[i] = (int *)malloc(p_matriz->columnas * sizeof(int));
+        if (matriz[i] == NULL)
         {
-            //TODO: ROLLBACK
+            for (int j = 0; j < i; j++)
+            {
+                free(matriz[j]);
+            }
+            free(matriz);
             return ALLOC_ERROR;
         }
     }
@@ -69,12 +75,47 @@ int alloc_matriz(o_matriz * p_matriz)
     return ALLOC_OK;
 }
 
+int cargar_matriz_file(o_matriz *p_matriz, char *nombreArchivo)
+{
+    FILE *archivo = fopen(nombreArchivo, "r");
+    char linea[30];
+    char *token;
+    int temp;
+    if (archivo == NULL)
+    {
+        printf("Error en apertura de archivo");
+        return READ_FILE_ERROR;
+    }
 
-extern int new_vector(o_vector * p_v, int v_size){
-    p_v->size=v_size;
-    p_v->v_methods =&v_methods;
+    for (int i = 0; i < p_matriz->filas; i++)
+    {
+        for (int j = 0; j < p_matriz->columnas; j++)
+        {
+            fscanf(archivo, "%d", &temp);
+            p_matriz->matriz[i][j] = temp;
+            
+        }
+    }
+
+    fclose(archivo);
+    return READ_FILE_OK;
+}
+
+void free_matriz(o_matriz *p_matriz)
+{
+    for (int j = 0; j < p_matriz->filas; j++)
+    {
+        free(p_matriz->matriz[j]);
+    }
+    free(p_matriz->matriz);
+}
+
+extern int new_vector(o_vector *p_v, int v_size)
+{
+    p_v->size = v_size;
+    p_v->v_methods = &v_methods;
     int p_v_alloc = p_v->v_methods->alloc_vector(p_v);
-    if(p_v_alloc == ALLOC_ERROR)
+    if (p_v_alloc == ALLOC_ERROR)
     {
         return ALLOC_ERROR;
     }
@@ -82,4 +123,17 @@ extern int new_vector(o_vector * p_v, int v_size){
     return ALLOC_OK;
 }
 
+extern int new_matriz(o_matriz *p_m, int filas, int columnas)
+{
+    p_m->columnas = columnas;
+    p_m->filas = filas;
+    p_m->metodos = &m_methods;
 
+    int p_m_alloc = p_m->metodos->alloc_matriz(p_m);
+    if (p_m_alloc == ALLOC_ERROR)
+    {
+        return ALLOC_ERROR;
+    }
+
+    return ALLOC_OK;
+}
