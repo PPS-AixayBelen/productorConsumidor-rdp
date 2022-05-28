@@ -41,9 +41,12 @@ extern int new_rdp(rdp_o *p_rdp)
         return ALLOC_ERROR;
     }
     p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->Ineg,"Ineg");
-
-    leer_matriz(PLACES, TRANSITIONS, p_rdp->Ipos[0], "Ipos");
-    leer_matriz(PLACES, TRANSITIONS, p_rdp->I[0], "Imatriz"); // Matriz de incidencia (N x M)
+    
+    if(new_matriz(&p_rdp->I,PLACES,TRANSITIONS) == ALLOC_ERROR)
+    {
+        return ALLOC_ERROR;
+    }
+    p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->I,"Imatriz");
 
     //TODO: Pasar a funcion que inicialice?
     for(int i = 0; i < TRANSITIONS; i++)
@@ -57,6 +60,7 @@ void cleanRDP(rdp_o *rdp)
     rdp->M.v_methods->free_vector(&rdp->M);
     rdp->Sensitized.v_methods->free_vector(&rdp->Sensitized);
     rdp->Ineg.metodos->free_matriz(&rdp->Ineg);
+    rdp->I.metodos->free_matriz(&rdp->I);
 }
 
 int isPos(rdp_o *rdp, int *index)
@@ -118,7 +122,7 @@ int isPos(rdp_o *rdp, int *index)
     {
         for (int m = 0; m < TRANSITIONS; m++)
         {
-            temp = rdp->I[n][m] * aux[m];
+            temp = rdp->I.matriz[n][m] * aux[m];
             aux2[n] = aux2[n] + temp;
         }
     }
