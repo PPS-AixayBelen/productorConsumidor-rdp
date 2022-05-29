@@ -31,7 +31,7 @@ struct rdp{
     o_matriz Ineg;
     o_matriz I;
     int dataNumber;
-    int packetCounter; // Es boolean
+    int packetCounter;
     void *invPlaza;
 
     const struct rdp_metodos *metodos;

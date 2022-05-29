@@ -11,6 +11,7 @@ void getSensitized(rdp_o *rdp);
 int ifEnd(rdp_o *rdp);
 void cleanRDP(rdp_o *rdp);
 void logInvariantePlaza(int *vectorMarcado, int size);
+void free_aux_data_structures();
 
 struct rdp_metodos rdpMetodos = {
 
@@ -35,7 +36,6 @@ extern int new_rdp(rdp_o *p_rdp)
         return ALLOC_ERROR;
     }
     cargar_vector(PLACES, p_rdp->M.vector, M); 
-
     if(new_matriz(&p_rdp->Ineg,PLACES,TRANSITIONS) == ALLOC_ERROR)
     {
         return ALLOC_ERROR;
@@ -88,68 +88,78 @@ int isPos(rdp_o *rdp, int *index)
     if (rdp->packetCounter == rdp->dataNumber) // Desensibiliza T0 si ya termino de generar paquetes
         rdp->Sensitized.vector[0] = 0;
 
-    int aux[TRANSITIONS];
-
-    for (int i = 0; i < TRANSITIONS; i++)
-    {
-        aux[i] = rdp->Sensitized.vector[i]; // Vector de sensibilizadas y no inhibidas
-    }
+    //TODO: Control de errores
+    o_vector aux;
+    new_vector(&aux,TRANSITIONS);
+   
+    aux.v_methods->copy(aux,rdp->Sensitized);
 
     for (int m = 0; m < TRANSITIONS; m++)
     {
-        if (aux[m] * index[m] > 0)
-            aux[m] = 1; // sigma and Ex
+        if (aux.vector[m] * index[m] > 0)
+            aux.vector[m] = 1; // sigma and Ex
         else
-            aux[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
+            aux.vector[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
     }
 
     int zeroCounter = 0; // Esto es para ver que lo que quiero y puedo disparar sea diferente de 0
     for (int m = 0; m < TRANSITIONS; m++)
     {
-        if (aux[m] != 0)
+        if (aux.vector[m] != 0)
             zeroCounter++;
     }
   
     if (zeroCounter == 0){ 
         if (DEBUG)
             printf("vector de disparo vacio o insensibilizado\n");
+        aux.v_methods->free_vector(&aux);
         return -1;
     }
 
-    int aux2[] = {0, 0, 0, 0, 0, 0, 0};
+    o_vector aux2;
+    new_vector(&aux2,PLACES);
+    //TODO: Pasar a otra funcion?, control de errores
+    for(int i = 0;i<PLACES;i++)
+    {
+        aux2.vector[i] = 0;
+    }
 
     for (int n = 0; n < PLACES; n++)
     {
         for (int m = 0; m < TRANSITIONS; m++)
         {
-            temp = rdp->I.matriz[n][m] * aux[m];
-            aux2[n] = aux2[n] + temp;
+            temp = rdp->I.matriz[n][m] * aux.vector[m];
+            aux2.vector[n] = aux2.vector[n] + temp;
         }
     }
 
-    int mPrima[PLACES] = {0, 0, 0, 0, 0, 0, 0};
+    //TODO: Control de errores
+    o_vector mPrima;
+    new_vector(&mPrima,PLACES);
 
     if (DEBUG)
         printf("Nuevo marcado: \n");
     for (int n = 0; n < PLACES; n++) // Si algun numero del nuevo vector de marcado es negativo, no puedo dispararla
     {                                    
-        mPrima[n] = rdp->M.vector[n] + aux2[n]; // Sumo para obtener el nuevo vector de marcado
+        mPrima.vector[n] = rdp->M.vector[n] + aux2.vector[n]; // Sumo para obtener el nuevo vector de marcado
         if (DEBUG)
-            printf("%d %s \n", mPrima[n], M_name[n]);
+            printf("%d %s \n", mPrima.vector[n], M_name[n]);
 
-        if (mPrima[n] < 0)
+        if (mPrima.vector[n] < 0)
         {
             if(DEBUG)
                 printf("la transicion no se puede disparar, marcado resultante negativo\n");
+            aux.v_methods->free_vector(&aux);
+            aux2.v_methods->free_vector(&aux2);
+            mPrima.v_methods->free_vector(&mPrima);
             return -1;
         }
     }
     
     for (int i = 0; i < PLACES; i++)
     {
-        rdp->M.vector[i] = mPrima[i];
+        rdp->M.vector[i] = mPrima.vector[i];
     }
-
 
     if (index[0] == 1)
     {
@@ -177,6 +187,9 @@ int isPos(rdp_o *rdp, int *index)
         rdp->Sensitized.v_methods->print(rdp->Sensitized);
     }
 
+    aux.v_methods->free_vector(&aux);
+    aux2.v_methods->free_vector(&aux2);
+    mPrima.v_methods->free_vector(&mPrima);
     return 0;
 }
 
@@ -198,3 +211,4 @@ int ifEnd(rdp_o *rdp) //determina si ya volvi al marcado inicial y se generaron 
     }
     return 0;
 }
+

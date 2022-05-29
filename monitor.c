@@ -104,7 +104,7 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
         else if (shootResult == 0)
         {
             logInvariantePlaza(&monitor->rdp->M.vector[0], PLACES);
-            //logInvarianteTransicion(monitor, index);
+            logInvarianteTransicion(monitor, index);
 
             if (monitor->boolQuesWait[index] > 0)
             {

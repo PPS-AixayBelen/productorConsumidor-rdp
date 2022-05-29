@@ -4,6 +4,7 @@
 int alloc_vector(o_vector *p_vector);
 int free_vector(o_vector *p_vector);
 void print(o_vector p_vector);
+int copy(o_vector dst,o_vector src);
 
 int alloc_matriz(o_matriz *p_matriz);
 void free_matriz(o_matriz *p_matriz);
@@ -12,7 +13,8 @@ int cargar_matriz_file(o_matriz *p_matriz, char *nombreArchivo);
 struct vector_methods v_methods = {
     .alloc_vector = alloc_vector,
     .free_vector = free_vector,
-    .print = print
+    .print = print,
+    .copy = copy
     };
 
 struct matriz_methods m_methods = {
@@ -73,6 +75,22 @@ int alloc_matriz(o_matriz *p_matriz)
     }
     p_matriz->matriz = matriz;
     return ALLOC_OK;
+}
+
+
+int copy(o_vector dst,o_vector src)
+{
+    if(src.size != dst.size)
+    {
+        return -1;
+    }
+
+    for (int i = 0; i < dst.size ; i++)
+    {     
+        dst.vector[i] = src.vector[i];
+    }
+
+    return 0;
 }
 
 int cargar_matriz_file(o_matriz *p_matriz, char *nombreArchivo)
