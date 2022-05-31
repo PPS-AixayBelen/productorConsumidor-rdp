@@ -17,11 +17,12 @@ struct cpuProcess
     int processNum; // Para probar
     monitor_o *monitor;
     int *processList; // puntero a lista de transiciones
+    int id;
     const struct cpuProcess_metodos *metodos;
 };
 
 // Funciones
 
-void new_cpuProcess(cpuProcess_o *p_cpuProcess, int *processList, int processNum, monitor_o *monitor);
+void new_cpuProcess(cpuProcess_o *p_cpuProcess, int *processList, int processNum, monitor_o *monitor, int id);
 
 #endif

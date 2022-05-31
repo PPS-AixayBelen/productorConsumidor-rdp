@@ -13,14 +13,14 @@ typedef struct monitor monitor_o;
 struct monitor_metodos
 {
 
-    void (*signalPoliticMonitor)(monitor_o *);
+    void (*signalPoliticMonitor)(monitor_o *, int index);
     void (*finalSignalPolitic)(monitor_o *);
     int (*shoot)(monitor_o *, int index);
+    void (*cleanMonitor)(monitor_o*);
 };
 
 struct monitor
 {
-
     pthread_mutex_t mutex; 
     pthread_cond_t *espera; 
     int *boolQuesWait; //0 = no esta esperando , 1 = esta esperando

@@ -11,13 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PRODUCTOR 2
-#define CONSUMIDOR 3
 
 
 int main()
 {
-    
     pthread_attr_t atrib;
     pthread_t c[5];
 
@@ -52,16 +49,18 @@ int main()
 
     for (int i = 0; i < PRODUCTOR;i++)
     {
-        new_cpuProcess(&tShooter[i], shootArray[0], 2, monitor);
+        new_cpuProcess(&tShooter[i], shootArray[0], 2, monitor, i);
     }
 
-        for (int i = 2; i <5;i++)
+        for (int i = PRODUCTOR; i < PRODUCTOR+CONSUMIDOR;i++)
     {
-        new_cpuProcess(&tShooter[i], shootArray[1], 2, monitor);
+        new_cpuProcess(&tShooter[i], shootArray[1], 2, monitor, i);
     }
 
     for (int i = 0; i < (PRODUCTOR + CONSUMIDOR); i++)
-        pthread_create(&c[i], &atrib,(&tShooter[i])->metodos->run , (cpuProcess_o *) &tShooter[i]);
+        pthread_create(&c[i], &atrib,(void*)(&tShooter[i])->metodos->run , (cpuProcess_o *) &tShooter[i]);
+
+
 
     for (int i = 0; i < (PRODUCTOR + CONSUMIDOR); i++){
         pthread_join(c[i], NULL);
@@ -70,11 +69,8 @@ int main()
    
     if (DEBUG)
         printf("\nFinalizo la ejecucion\n");
-        
-    // FILE * invTransicionFile = fopen("./test/InvarianteTransicion","w+");
-    // fputs(monitor->logInvTransicion,invTransicionFile);
-    // fclose(invTransicionFile);
-
-    // free(monitor->politica);
-    // free(monitor->logInvTransicion);
+    
+    monitor->metodos->cleanMonitor(monitor);
+    rdp.metodos->cleanRDP(&rdp);
+    
 }

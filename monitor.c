@@ -20,14 +20,19 @@ void logInvarianteTransicion(monitor_o *monitor, int index)
     char *transicion[] = {"T0", "T1", "T2", "T3"};
     if (monitor->logInvTransicion == NULL)
     {
-        monitor->logInvTransicion = (char *)malloc(sizeof(char) * strlen(transicion[index]));
+        monitor->logInvTransicion = (char *)malloc(sizeof(char) * strlen(transicion[index]+1));
         strcpy(monitor->logInvTransicion, transicion[index]);
     }
     else
     {
-        monitor->logInvTransicion = (char *)realloc(monitor->logInvTransicion, sizeof(char) * (strlen(monitor->logInvTransicion) + strlen(transicion[index])));
+        monitor->logInvTransicion = (char *)realloc(monitor->logInvTransicion, sizeof(char) * (strlen(monitor->logInvTransicion) +1+ strlen(transicion[index])));
         strcat(monitor->logInvTransicion, transicion[index]);
     }
+}
+
+void cleanMonitor(monitor_o *monitor){
+    free(monitor->politica);
+    free(monitor->logInvTransicion);
 }
 
 void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para terminar la ejecucion
@@ -39,7 +44,7 @@ void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para 
     }
 }
 
-void signalPoliticMonitor(monitor_o *monitor) // define que hilo tiene que despertar y lo despierta
+void signalPoliticMonitor(monitor_o *monitor, int index) // define que hilo tiene que despertar y lo despierta
 {
     if (monitor->rdp->metodos->ifEnd(monitor->rdp))
     { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
@@ -54,7 +59,7 @@ void signalPoliticMonitor(monitor_o *monitor) // define que hilo tiene que despe
     }
     else
     {
-        int t = monitor->politica->metodos->signalPolitic(monitor->politica, monitor->boolQuesWait); // Devuelve el indice de la transicion donde esta el hilo a despertar
+        int t = monitor->politica->metodos->signalPolitic(monitor->politica, monitor->boolQuesWait, index); // Devuelve el indice de la transicion donde esta el hilo a despertar
         if (t != -1)
         {
             pthread_cond_signal(&(monitor->espera[t]));
@@ -91,13 +96,14 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
             }
 
             if (DEBUG)
-                printf("me fui a dormir disparando %d, con shootResult = %d\n", index, shootResult);
+                printf("me fui a dormir disparando %d, con shootResult = %d \n", index, shootResult);
+
             monitor->boolQuesWait[index] += 1; // se setea un 1 en la transicion en la que se durmio el hilo
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }
         else if (shootResult == 0)
         {
-            logInvariantePlaza(&monitor->rdp->M[0], PLACES);
+            logInvariantePlaza(&monitor->rdp->M.vector[0], PLACES);
             logInvarianteTransicion(monitor, index);
 
             if (monitor->boolQuesWait[index] > 0)
@@ -105,7 +111,7 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
                 monitor->boolQuesWait[index] -= 1; // porque en este caso solo puede haber un hilo dormido por transicion
             }
 
-            signalPoliticMonitor(monitor); // despierto al proximo hilo
+            signalPoliticMonitor(monitor, index); // despierto al proximo hilo
             break;
         }
         else
@@ -123,7 +129,8 @@ struct monitor_metodos monitorMetodos = {
 
     .signalPoliticMonitor = signalPoliticMonitor,
     .finalSignalPolitic = finalSignalPolitic,
-    .shoot = shoot};
+    .shoot = shoot,
+    .cleanMonitor = cleanMonitor};
 
 extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
 {
