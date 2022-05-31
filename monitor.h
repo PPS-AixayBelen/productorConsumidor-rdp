@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include "rdp.h"
 #include "politica.h"
+#define TEST_INVARIANTS 1
 
 typedef struct monitor monitor_o;
 
@@ -17,6 +18,7 @@ struct monitor_metodos
     void (*finalSignalPolitic)(monitor_o *);
     int (*shoot)(monitor_o *, int index);
     void (*cleanMonitor)(monitor_o*);
+    int (*verifyMInvariants)(monitor_o *monitor);
 };
 
 struct monitor
