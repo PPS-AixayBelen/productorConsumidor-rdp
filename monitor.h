@@ -11,6 +11,10 @@
 
 typedef struct monitor monitor_o;
 
+/**
+ * @brief Estructura que define punteros a las funciones para la estructura monitor.
+ * 
+ */
 struct monitor_metodos
 {
 
@@ -21,6 +25,18 @@ struct monitor_metodos
     int (*verifyMInvariants)(monitor_o *monitor);
 };
 
+/**
+ * @brief Estructura que contiene las siguientes variables:
+ * mutex: Mutex para asegurar la exclusion mutua en el acceso al monitor.
+ * espera: Vector que contiene una cola de condicion por transicion.
+ * boolQuesWait: Vector que indica cuantos hilos hay actualmente durmiendo 
+ * en cada cola de condicion de espera.
+ * politica: Estructura que corresponde a una clase politica.
+ * rdp: Estructura que corresponde a una clase rdp.
+ * end: Indica si el programa debe finalizar cuando su valor es 1.
+ * logInvTransicion: String que contiene las transiciones disparadas.
+ * metodos: Puntero a una estructura con punteros a funciones.
+ */
 struct monitor
 {
     pthread_mutex_t mutex;
