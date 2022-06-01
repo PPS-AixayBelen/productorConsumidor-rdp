@@ -47,7 +47,11 @@ int main()
         printf("ERROR DE ALOCACION\n");
         exit(1);
     }
-    new_monitor(&mymonitor, mutex, espera, boolQuesWait, &rdp);
+    if(new_monitor(&mymonitor, mutex, espera, boolQuesWait, &rdp)==ALLOC_ERROR)
+    {
+        printf("ERROR DE ALOCACION\n");
+        exit(1);
+    }
 
     for (int i = 0; i < PRODUCTOR; i++)
     {

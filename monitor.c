@@ -150,7 +150,7 @@ struct monitor_metodos monitorMetodos = {
     .shoot = shoot,
     .cleanMonitor = cleanMonitor};
 
-extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
+extern int new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
 {
     p_monitor->rdp = rdp;
     p_monitor->mutex = mutex;
@@ -160,5 +160,10 @@ extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_con
     p_monitor->end = 0;
     p_monitor->metodos = &monitorMetodos;
     p_monitor->politica = (politica_o *)malloc(sizeof(politica_o));
+    if(p_monitor->politica==NULL)
+    {
+        return ALLOC_ERROR;
+    }
     new_politica(p_monitor->politica, rdp);
+    return ALLOC_OK;
 }
