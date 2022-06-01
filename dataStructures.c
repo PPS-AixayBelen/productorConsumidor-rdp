@@ -4,7 +4,7 @@
 int alloc_vector(o_vector *p_vector);
 int free_vector(o_vector *p_vector);
 void print(o_vector p_vector);
-int copy(o_vector dst,o_vector src);
+int copy(o_vector dst, o_vector src);
 
 int alloc_matriz(o_matriz *p_matriz);
 void free_matriz(o_matriz *p_matriz);
@@ -14,14 +14,12 @@ struct vector_methods v_methods = {
     .alloc_vector = alloc_vector,
     .free_vector = free_vector,
     .print = print,
-    .copy = copy
-    };
+    .copy = copy};
 
 struct matriz_methods m_methods = {
     .alloc_matriz = alloc_matriz,
     .free_matriz = free_matriz,
-    .cargar_matriz_file = cargar_matriz_file
-    };
+    .cargar_matriz_file = cargar_matriz_file};
 
 int alloc_vector(o_vector *p_vector)
 {
@@ -77,16 +75,15 @@ int alloc_matriz(o_matriz *p_matriz)
     return ALLOC_OK;
 }
 
-
-int copy(o_vector dst,o_vector src)
+int copy(o_vector dst, o_vector src)
 {
-    if(src.size != dst.size)
+    if (src.size != dst.size)
     {
         return -1;
     }
 
-    for (int i = 0; i < dst.size ; i++)
-    {     
+    for (int i = 0; i < dst.size; i++)
+    {
         dst.vector[i] = src.vector[i];
     }
 
@@ -111,7 +108,6 @@ int cargar_matriz_file(o_matriz *p_matriz, char *nombreArchivo)
         {
             fscanf(archivo, "%d", &temp);
             p_matriz->matriz[i][j] = temp;
-            
         }
     }
 
