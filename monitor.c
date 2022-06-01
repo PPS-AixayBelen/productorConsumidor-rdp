@@ -91,6 +91,11 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
 
         if (shootResult < 0) // si devolvio -1, el hilo deberia irse a dormir
         {
+            if(shootResult==ERROR)
+            {
+                printf("ERROR DE ALOCACION. \n");
+                exit(1);
+            }
             if (monitor->end) // si ya se llego al final de la ejecucion, no se puede disparar nada
             {
                 pthread_mutex_unlock(&(monitor->mutex));
@@ -145,7 +150,7 @@ struct monitor_metodos monitorMetodos = {
     .shoot = shoot,
     .cleanMonitor = cleanMonitor};
 
-extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
+extern int new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
 {
     p_monitor->rdp = rdp;
     p_monitor->mutex = mutex;
@@ -155,5 +160,10 @@ extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_con
     p_monitor->end = 0;
     p_monitor->metodos = &monitorMetodos;
     p_monitor->politica = (politica_o *)malloc(sizeof(politica_o));
+    if(p_monitor->politica==NULL)
+    {
+        return ALLOC_ERROR;
+    }
     new_politica(p_monitor->politica, rdp);
+    return ALLOC_OK;
 }

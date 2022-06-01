@@ -33,6 +33,6 @@ struct monitor
     const struct monitor_metodos *metodos;
 };
 
-void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp);
+int new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp);
 
 #endif

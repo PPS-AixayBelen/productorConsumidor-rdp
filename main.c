@@ -42,8 +42,16 @@ int main()
     {
         pthread_cond_init(&espera[i], NULL);
     }
-    new_rdp(&rdp);
-    new_monitor(&mymonitor, mutex, espera, boolQuesWait, &rdp);
+    if(new_rdp(&rdp)==ALLOC_ERROR)
+    {
+        printf("ERROR DE ALOCACION\n");
+        exit(1);
+    }
+    if(new_monitor(&mymonitor, mutex, espera, boolQuesWait, &rdp)==ALLOC_ERROR)
+    {
+        printf("ERROR DE ALOCACION\n");
+        exit(1);
+    }
 
     for (int i = 0; i < PRODUCTOR; i++)
     {
