@@ -91,6 +91,11 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
 
         if (shootResult < 0) // si devolvio -1, el hilo deberia irse a dormir
         {
+            if(shootResult==ERROR)
+            {
+                printf("ERROR DE ALOCACION. \n");
+                exit(1);
+            }
             if (monitor->end) // si ya se llego al final de la ejecucion, no se puede disparar nada
             {
                 pthread_mutex_unlock(&(monitor->mutex));
