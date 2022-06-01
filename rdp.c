@@ -13,12 +13,23 @@ void cleanRDP(rdp_o *rdp);
 void logInvariantePlaza(int *vectorMarcado, int size);
 void free_aux_data_structures();
 
+/**
+ * @brief Estructura que contiene los metodos que tenga la estructura red de petri.
+ * 
+ */
 struct rdp_metodos rdpMetodos = {
 
     .isPos = isPos,
     .ifEnd = ifEnd,
     .cleanRDP = cleanRDP};
 
+/**
+ * @brief Inicializa las estructuras y variables que contiene la estructura que representa la red de petri,
+ *  aloca los vectores y matrices necesarias.
+ *
+ * @param p_rdp Puntero a la estructura de la red de petri a inicializar
+ * @return int -1 en caso de que ocurra un error al alocar las estructuras de datos, 0 si todo es correcto.
+ */
 extern int new_rdp(rdp_o *p_rdp)
 {
     p_rdp->dataNumber = 5;    // cant max de paquetes a generar
@@ -52,8 +63,14 @@ extern int new_rdp(rdp_o *p_rdp)
         p_rdp->Sensitized.vector[i] = 0;
 
     p_rdp->metodos = &rdpMetodos;
+    return ALLOC_OK;
 }
 
+/**
+ * @brief Se encarga de liberar las estructuras de datos alocadas por la funcion new_rdp.
+ *
+ * @param rdp Puntero a la estructura que contiene las estructuras a liberar.
+ */
 void cleanRDP(rdp_o *rdp)
 {
     rdp->M.v_methods->free_vector(&rdp->M);
@@ -62,6 +79,14 @@ void cleanRDP(rdp_o *rdp)
     rdp->I.metodos->free_matriz(&rdp->I);
 }
 
+/**
+ * @brief Verifica si es posible disparar la transicion cuyo indice esta indicado por la variable index.
+ *
+ * @param rdp Puntero a la estructura de la red de petri
+ * @param index Indice de la transicion a disparar
+ * @return int -1 si no es posible disparar la transicion, 0 si es posible dispararla y -5 si ocurre un error
+ * al intentar alocar los vectores.
+ */
 int isPos(rdp_o *rdp, int *index)
 {
 
@@ -75,7 +100,7 @@ int isPos(rdp_o *rdp, int *index)
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0) 
+            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0)
             {
                 rdp->Sensitized.vector[m] = 0;
                 break;
@@ -88,7 +113,7 @@ int isPos(rdp_o *rdp, int *index)
         rdp->Sensitized.vector[0] = 0;
 
     o_vector aux;
-    if(new_vector(&aux, TRANSITIONS)== ALLOC_ERROR)
+    if (new_vector(&aux, TRANSITIONS) == ALLOC_ERROR)
     {
         return ERROR;
     };
@@ -119,7 +144,7 @@ int isPos(rdp_o *rdp, int *index)
     }
 
     o_vector aux2;
-    if(new_vector(&aux2, PLACES) == ALLOC_ERROR)
+    if (new_vector(&aux2, PLACES) == ALLOC_ERROR)
     {
         return ERROR;
     }
@@ -140,7 +165,7 @@ int isPos(rdp_o *rdp, int *index)
     }
 
     o_vector mPrima;
-    if(new_vector(&mPrima, PLACES) == ALLOC_ERROR)
+    if (new_vector(&mPrima, PLACES) == ALLOC_ERROR)
     {
         return ERROR;
     }
@@ -201,6 +226,13 @@ int isPos(rdp_o *rdp, int *index)
     return 0;
 }
 
+/**
+ * @brief Verifica si se generaron todos los paquetes generados y si se volvio al 
+ * marcado inicial, indica que el programa debe terminar.
+ * 
+ * @param rdp Puntero a la estructura de la red de petri.
+ * @return int 0 si el programa no debe terminar, 1 si el programa debe terminar.
+ */
 int ifEnd(rdp_o *rdp) // determina si ya volvi al marcado inicial y se generaron todos los paquetes requeridos
 {
     int Minitial[PLACES] = {3, 2, 5, 0, 0, 1, 0};
