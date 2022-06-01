@@ -17,15 +17,15 @@ struct monitor_metodos
     void (*signalPoliticMonitor)(monitor_o *, int index);
     void (*finalSignalPolitic)(monitor_o *);
     int (*shoot)(monitor_o *, int index);
-    void (*cleanMonitor)(monitor_o*);
+    void (*cleanMonitor)(monitor_o *);
     int (*verifyMInvariants)(monitor_o *monitor);
 };
 
 struct monitor
 {
-    pthread_mutex_t mutex; 
-    pthread_cond_t *espera; 
-    int *boolQuesWait; //0 = no esta esperando , 1 = esta esperando
+    pthread_mutex_t mutex;
+    pthread_cond_t *espera;
+    int *boolQuesWait; // 0 = no esta esperando , 1 = esta esperando
     politica_o *politica;
     rdp_o *rdp;
     int end;

@@ -17,39 +17,38 @@ struct rdp_metodos rdpMetodos = {
 
     .isPos = isPos,
     .ifEnd = ifEnd,
-    .cleanRDP = cleanRDP
-    };
+    .cleanRDP = cleanRDP};
 
 extern int new_rdp(rdp_o *p_rdp)
 {
-    p_rdp->dataNumber = 5; //cant max de paquetes a generar
-    p_rdp->packetCounter = 0; //contador de paquetes generados hasta el momento por T0
+    p_rdp->dataNumber = 5;    // cant max de paquetes a generar
+    p_rdp->packetCounter = 0; // contador de paquetes generados hasta el momento por T0
 
-    char M[] = "3 2 5 0 0 1 0"; //marcado inicial
-    if(new_vector(&p_rdp->M,PLACES) == ALLOC_ERROR)
+    char M[] = "3 2 5 0 0 1 0"; // marcado inicial
+    if (new_vector(&p_rdp->M, PLACES) == ALLOC_ERROR)
     {
         return ALLOC_ERROR;
     }
 
-    if(new_vector(&p_rdp->Sensitized,TRANSITIONS) == ALLOC_ERROR)
+    if (new_vector(&p_rdp->Sensitized, TRANSITIONS) == ALLOC_ERROR)
     {
         return ALLOC_ERROR;
     }
-    cargar_vector(PLACES, p_rdp->M.vector, M); 
-    if(new_matriz(&p_rdp->Ineg,PLACES,TRANSITIONS) == ALLOC_ERROR)
+    cargar_vector(PLACES, p_rdp->M.vector, M);
+    if (new_matriz(&p_rdp->Ineg, PLACES, TRANSITIONS) == ALLOC_ERROR)
     {
         return ALLOC_ERROR;
     }
-    p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->Ineg,"Ineg");
-    
-    if(new_matriz(&p_rdp->I,PLACES,TRANSITIONS) == ALLOC_ERROR)
-    {
-        return ALLOC_ERROR;
-    }
-    p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->I,"Imatriz");
+    p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->Ineg, "Ineg");
 
-    //TODO: Pasar a funcion que inicialice?
-    for(int i = 0; i < TRANSITIONS; i++)
+    if (new_matriz(&p_rdp->I, PLACES, TRANSITIONS) == ALLOC_ERROR)
+    {
+        return ALLOC_ERROR;
+    }
+    p_rdp->Ineg.metodos->cargar_matriz_file(&p_rdp->I, "Imatriz");
+
+    // TODO: Pasar a funcion que inicialice?
+    for (int i = 0; i < TRANSITIONS; i++)
         p_rdp->Sensitized.vector[i] = 0;
 
     p_rdp->metodos = &rdpMetodos;
@@ -76,7 +75,7 @@ int isPos(rdp_o *rdp, int *index)
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0) //TODO: Rompe aca
+            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0) // TODO: Rompe aca
             {
                 rdp->Sensitized.vector[m] = 0;
                 break;
@@ -88,11 +87,11 @@ int isPos(rdp_o *rdp, int *index)
     if (rdp->packetCounter == rdp->dataNumber) // Desensibiliza T0 si ya termino de generar paquetes
         rdp->Sensitized.vector[0] = 0;
 
-    //TODO: Control de errores
+    // TODO: Control de errores
     o_vector aux;
-    new_vector(&aux,TRANSITIONS);
-   
-    aux.v_methods->copy(aux,rdp->Sensitized);
+    new_vector(&aux, TRANSITIONS);
+
+    aux.v_methods->copy(aux, rdp->Sensitized);
 
     for (int m = 0; m < TRANSITIONS; m++)
     {
@@ -108,8 +107,9 @@ int isPos(rdp_o *rdp, int *index)
         if (aux.vector[m] != 0)
             zeroCounter++;
     }
-  
-    if (zeroCounter == 0){ 
+
+    if (zeroCounter == 0)
+    {
         if (DEBUG)
             printf("vector de disparo vacio o insensibilizado\n");
         aux.v_methods->free_vector(&aux);
@@ -117,9 +117,9 @@ int isPos(rdp_o *rdp, int *index)
     }
 
     o_vector aux2;
-    new_vector(&aux2,PLACES);
-    //TODO: Pasar a otra funcion?, control de errores
-    for(int i = 0;i<PLACES;i++)
+    new_vector(&aux2, PLACES);
+    // TODO: Pasar a otra funcion?, control de errores
+    for (int i = 0; i < PLACES; i++)
     {
         aux2.vector[i] = 0;
     }
@@ -133,21 +133,21 @@ int isPos(rdp_o *rdp, int *index)
         }
     }
 
-    //TODO: Control de errores
+    // TODO: Control de errores
     o_vector mPrima;
-    new_vector(&mPrima,PLACES);
+    new_vector(&mPrima, PLACES);
 
     if (DEBUG)
         printf("Nuevo marcado: \n");
     for (int n = 0; n < PLACES; n++) // Si algun numero del nuevo vector de marcado es negativo, no puedo dispararla
-    {                                    
+    {
         mPrima.vector[n] = rdp->M.vector[n] + aux2.vector[n]; // Sumo para obtener el nuevo vector de marcado
         if (DEBUG)
             printf("%d %s \n", mPrima.vector[n], M_name[n]);
 
         if (mPrima.vector[n] < 0)
         {
-            if(DEBUG)
+            if (DEBUG)
                 printf("la transicion no se puede disparar, marcado resultante negativo\n");
             aux.v_methods->free_vector(&aux);
             aux2.v_methods->free_vector(&aux2);
@@ -155,7 +155,7 @@ int isPos(rdp_o *rdp, int *index)
             return -1;
         }
     }
-    
+
     for (int i = 0; i < PLACES; i++)
     {
         rdp->M.vector[i] = mPrima.vector[i];
@@ -163,9 +163,9 @@ int isPos(rdp_o *rdp, int *index)
 
     if (index[0] == 1)
     {
-        rdp->packetCounter = rdp->packetCounter+1;
+        rdp->packetCounter = rdp->packetCounter + 1;
         if (DEBUG)
-            printf("\nNuevo paquete ahora tengo: %d\n",rdp->packetCounter);
+            printf("\nNuevo paquete ahora tengo: %d\n", rdp->packetCounter);
     }
 
     for (int m = 0; m < TRANSITIONS; m++)
@@ -193,12 +193,12 @@ int isPos(rdp_o *rdp, int *index)
     return 0;
 }
 
-int ifEnd(rdp_o *rdp) //determina si ya volvi al marcado inicial y se generaron todos los paquetes requeridos
+int ifEnd(rdp_o *rdp) // determina si ya volvi al marcado inicial y se generaron todos los paquetes requeridos
 {
-    int Minitial[PLACES] = {3,2,5,0,0,1,0};
+    int Minitial[PLACES] = {3, 2, 5, 0, 0, 1, 0};
 
     for (int n = 0; n < PLACES; n++)
-    {  
+    {
         if (rdp->M.vector[n] != Minitial[n])
         {
             return 0;
@@ -211,4 +211,3 @@ int ifEnd(rdp_o *rdp) //determina si ya volvi al marcado inicial y se generaron 
     }
     return 0;
 }
-

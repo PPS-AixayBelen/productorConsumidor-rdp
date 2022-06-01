@@ -24,10 +24,11 @@ struct rdp_metodos
     void (*cleanRDP)(rdp_o *);
 };
 
-struct rdp{
-   
-    o_vector M; 
-    o_vector Sensitized; 
+struct rdp
+{
+
+    o_vector M;
+    o_vector Sensitized;
     o_matriz Ineg;
     o_matriz I;
     int dataNumber;

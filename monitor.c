@@ -5,34 +5,34 @@
 
 void logInvarianteTransicion(monitor_o *monitor, int index)
 {
-    char *transicion[] = {"T0", "T1", "T2", "T3"};
+    char *transicion[4] = {"T0", "T1", "T2", "T3"};
     if (monitor->logInvTransicion == NULL)
     {
-        monitor->logInvTransicion = (char *)malloc(sizeof(char) * strlen(transicion[index]+1));
+        monitor->logInvTransicion = (char *)malloc(sizeof(char) * 3);
         strcpy(monitor->logInvTransicion, transicion[index]);
     }
     else
     {
-        monitor->logInvTransicion = (char *)realloc(monitor->logInvTransicion, sizeof(char) * (strlen(monitor->logInvTransicion) +1+ strlen(transicion[index])));
+        monitor->logInvTransicion = (char *)realloc(monitor->logInvTransicion, sizeof(char) * (strlen(monitor->logInvTransicion) + 3));
         strcat(monitor->logInvTransicion, transicion[index]);
     }
 }
 
-int verifyMInvariants (monitor_o *monitor){
+int verifyMInvariants(monitor_o *monitor)
+{
 
-    int *mark= &monitor->rdp->M.vector[0];
+    int *mark = &monitor->rdp->M.vector[0];
 
-
-    if (((mark[0] + mark[4]) == 3) && ((mark[1] + mark[3]) == 2) && ((mark[3] + mark[4] + mark[5]) == 1) && ((mark[2] + mark[3]+mark[4]+ mark[6]) == 5) )
+    if (((mark[0] + mark[4]) == 3) && ((mark[1] + mark[3]) == 2) && ((mark[3] + mark[4] + mark[5]) == 1) && ((mark[2] + mark[3] + mark[4] + mark[6]) == 5))
     {
-         return 1;
-    }   
-    else 
-        return 0; //rompiose        
-
+        return 1;
+    }
+    else
+        return 0; // rompiose
 }
 
-void cleanMonitor(monitor_o *monitor){
+void cleanMonitor(monitor_o *monitor)
+{
     free(monitor->politica);
     free(monitor->logInvTransicion);
 }
@@ -105,7 +105,7 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
         }
         else if (shootResult == 0)
         {
-            if(TEST_INVARIANTS)
+            if (TEST_INVARIANTS)
             {
                 logInvarianteTransicion(monitor, index);
             }
@@ -125,13 +125,13 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
         }
     }
 
-    if(TEST_INVARIANTS)
+    if (TEST_INVARIANTS)
     {
-    if(!verifyMInvariants(monitor))
-    {
-        printf("error de Invariantes\n");
-        exit(1); //rompiose
-    }
+        if (!verifyMInvariants(monitor))
+        {
+            printf("error de Invariantes\n");
+            exit(1); // rompiose
+        }
     }
 
     pthread_mutex_unlock(&(monitor->mutex));
