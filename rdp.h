@@ -13,6 +13,7 @@
 #define PLACES 7
 #define BUFFERS 2
 #define DEBUG 1
+#define ERROR -5
 //#define PRODUCTOR 1
 typedef struct rdp rdp_o;
 

@@ -75,7 +75,7 @@ int isPos(rdp_o *rdp, int *index)
 
         for (int n = 0; n < PLACES; n++)
         {
-            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0) // TODO: Rompe aca
+            if (rdp->M.vector[n] - rdp->Ineg.matriz[n][m] < 0) 
             {
                 rdp->Sensitized.vector[m] = 0;
                 break;
@@ -87,9 +87,11 @@ int isPos(rdp_o *rdp, int *index)
     if (rdp->packetCounter == rdp->dataNumber) // Desensibiliza T0 si ya termino de generar paquetes
         rdp->Sensitized.vector[0] = 0;
 
-    // TODO: Control de errores
     o_vector aux;
-    new_vector(&aux, TRANSITIONS);
+    if(new_vector(&aux, TRANSITIONS)== ALLOC_ERROR)
+    {
+        return ERROR;
+    };
 
     aux.v_methods->copy(aux, rdp->Sensitized);
 
@@ -117,8 +119,12 @@ int isPos(rdp_o *rdp, int *index)
     }
 
     o_vector aux2;
-    new_vector(&aux2, PLACES);
-    // TODO: Pasar a otra funcion?, control de errores
+    if(new_vector(&aux2, PLACES) == ALLOC_ERROR)
+    {
+        return ERROR;
+    }
+
+    // TODO: Pasar a otra funcion?
     for (int i = 0; i < PLACES; i++)
     {
         aux2.vector[i] = 0;
@@ -133,9 +139,11 @@ int isPos(rdp_o *rdp, int *index)
         }
     }
 
-    // TODO: Control de errores
     o_vector mPrima;
-    new_vector(&mPrima, PLACES);
+    if(new_vector(&mPrima, PLACES) == ALLOC_ERROR)
+    {
+        return ERROR;
+    }
 
     if (DEBUG)
         printf("Nuevo marcado: \n");
