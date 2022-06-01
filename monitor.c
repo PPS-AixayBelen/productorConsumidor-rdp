@@ -3,6 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @brief Concatena la cadena de caracteres que corresponde a la transicion
+ *  disparada en la variable logInvTransicion de monitor, aloca la memoria 
+ * necesaria para esto.
+ * 
+ * @param monitor 
+ * @param index Indice que corresponde a la transicion disparada.
+ */
 void logInvarianteTransicion(monitor_o *monitor, int index)
 {
     char *transicion[4] = {"T0", "T1", "T2", "T3"};
@@ -18,6 +26,12 @@ void logInvarianteTransicion(monitor_o *monitor, int index)
     }
 }
 
+/**
+ * @brief Verifica los invariantes de plaza de la red de petri. 
+ * 
+ * @param monitor Estructura del monitor que contiene el vector de marcado actual en su estructura rdp.
+ * @return int 1 si se cumplen los invariantes de plaza, 0 si no se cumplen.
+ */
 int verifyMInvariants(monitor_o *monitor)
 {
 
@@ -31,12 +45,23 @@ int verifyMInvariants(monitor_o *monitor)
         return 0; // rompiose
 }
 
+/**
+ * @brief Libera las variables alocadas en la estructura monitor.
+ * 
+ * @param monitor 
+ */
 void cleanMonitor(monitor_o *monitor)
 {
     free(monitor->politica);
     free(monitor->logInvTransicion);
 }
 
+/**
+ * @brief Despierta todos los hilos que actualmente estan durmiendo en las colas de
+ * condicion, y pone en 0 el vector boolQuesWait ya que no hay hilos durmiendo.
+ * 
+ * @param monitor 
+ */
 void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para terminar la ejecucion
 {
     for (int i = 0; i < TRANSITIONS; i++)
@@ -46,16 +71,20 @@ void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para 
     }
 }
 
-void signalPoliticMonitor(monitor_o *monitor, int index) // define que hilo tiene que despertar y lo despierta
+/**
+ * @brief Define que hilo tiene que despertar y lo despierta. En caso de que el programa deba finalizar, 
+ * se setea la variable end de monitor en 1.
+ * 
+ * @param monitor 
+ * @param index Indice de la ultima transicion disparada
+ */
+void signalPoliticMonitor(monitor_o *monitor, int index) 
 {
     if (monitor->rdp->metodos->ifEnd(monitor->rdp))
     { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
         if (DEBUG)
             printf("No se pudo despertar a ningun hilo\n");
         monitor->end = 1;
-        // for (int i = 0; i < TRANSITIONS; i++){
-        //     pthread_cond_broadcast(&(monitor->espera[i])); //por si algun hilo quedo dormido
-        // }
 
         finalSignalPolitic(monitor);
     }
@@ -72,7 +101,16 @@ void signalPoliticMonitor(monitor_o *monitor, int index) // define que hilo tien
     return;
 }
 
-int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devuelve 0 si pudo hacerla
+/**
+ * @brief Dispara la transicion indicada por index, o duerme al hilo en la
+ * cola de condicion correspondiente. Tambien realiza la verificacion de 
+ * los invariantes de plaza y termina la ejecucion si estos fallan.
+ * 
+ * @param monitor 
+ * @param index Indice que indica la transicion a disparar
+ * @return int 0 si pudo dispararla, -1 si no pudo dispararla.
+ */
+int shoot(monitor_o *monitor, int index) 
 {
 
     pthread_mutex_lock(&(monitor->mutex));
@@ -143,6 +181,10 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
     return 0;
 }
 
+/**
+ * @brief Relaciona las funciones declaradas con las establecidas en la estructura monitor_metodos.
+ * 
+ */
 struct monitor_metodos monitorMetodos = {
 
     .signalPoliticMonitor = signalPoliticMonitor,
@@ -150,6 +192,17 @@ struct monitor_metodos monitorMetodos = {
     .shoot = shoot,
     .cleanMonitor = cleanMonitor};
 
+/**
+ * @brief Se encarga de inicializar las variables que contiene la estructura monitor.
+ * Se aloca una estructura politica y se inicializa la misma.
+ * 
+ * @param p_monitor Puntero a la estructura monitor cuyos valores se inicializaran.
+ * @param mutex Mutex para el acceso a la ejecucion del monitor con exclusion mutua.
+ * @param espera Vector con una cola de condicion correspondiente a cada transicion.
+ * @param boolQuesWait Vector que contendra la cantidad de hilos durmiendo en cada cola de condicion.
+ * @param rdp Puntero a la estructura de la red de petri.
+ * @return int 0 si se inicializo correctamente, -1 si ocurrio un error al alocar la estructura politica.
+ */
 extern int new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
 {
     p_monitor->rdp = rdp;

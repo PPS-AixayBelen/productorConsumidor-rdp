@@ -11,6 +11,11 @@ struct cpuProcess_metodos
     void *(*run)(cpuProcess_o *);
 };
 
+/**
+ * @brief Estructura que contiene la funcion que ejecutaran los hilos
+ * e informacion sobre las transiciones que deben disparar los mismos.
+ * 
+ */
 struct cpuProcess
 {
 

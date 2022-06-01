@@ -2,6 +2,16 @@
 #include "rdp.h"
 #include <stdio.h>
 
+/**
+ * @brief Retorna el indice de la cola de condicion de donde se debe despertar un hilo. Si la transicion
+ *  disparada corresponde a un productor, se debe despertar un hilo consumidor y viceversa.
+ *
+ * @param politica Puntero a la estructura politica
+ * @param boolQuesWait Vector que contiene el numero de hilos bloqueados en cada cola de condicion
+ * @param index Indice de la ultima transicion disparada
+ * @return int Retorna el indice de la cola de condicion de donde se debe despertar un hilo, o -1
+ *  si no se puede despertar a ninguno.
+ */
 int signalPolitic(politica_o *politica, int *boolQuesWait, int index)
 {
     int i = 0;          //
@@ -20,15 +30,24 @@ int signalPolitic(politica_o *politica, int *boolQuesWait, int index)
     return -1;
 }
 
+/**
+ * @brief Estructura que contiene los metodos de la estructura politica.
+ * 
+ */
 struct politica_metodos politicaMetodos = {
 
     .signalPolitic = signalPolitic
 
 };
 
+/**
+ * @brief Se encarga de inicializar las variables de la estructura politica
+ * 
+ * @param p_politica Puntero a la estructura de la politica.
+ * @param rdp Puntero a la estructura de la red de petri.
+ */
 extern void new_politica(politica_o *p_politica, rdp_o *rdp)
 {
     p_politica->rdp = rdp;
-    p_politica->markVector = p_politica->rdp->M.vector;
     p_politica->metodos = &politicaMetodos;
 }

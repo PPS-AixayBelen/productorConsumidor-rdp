@@ -16,6 +16,10 @@
 #define ERROR -5
 typedef struct rdp rdp_o;
 
+/**
+ * @brief Se declaran los metodos que tendra la estructura red de petri
+ * 
+ */
 struct rdp_metodos
 {
 
@@ -24,6 +28,12 @@ struct rdp_metodos
     void (*cleanRDP)(rdp_o *);
 };
 
+/**
+ * @brief Estructura que representa la clase red de petri, contiene una estructura 
+ * de tipo rdp_metodos que contiene una serie de punteros a las funciones que 
+ * corresponden a la red de petri.
+ * 
+ */
 struct rdp
 {
 
