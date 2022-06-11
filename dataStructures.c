@@ -1,10 +1,11 @@
 #include "dataStructures.h"
-#include <stdlib.h>
+
 
 int alloc_vector(o_vector *p_vector);
 void free_vector(o_vector *p_vector);
 void print(o_vector p_vector);
 int copy(o_vector dst, o_vector src);
+void cargar_vector(o_vector* vector, char *v);
 
 int alloc_matriz(o_matriz *p_matriz);
 void free_matriz(o_matriz *p_matriz);
@@ -14,7 +15,8 @@ struct vector_methods v_methods = {
     .alloc_vector = alloc_vector,
     .free_vector = free_vector,
     .print = print,
-    .copy = copy};
+    .copy = copy,
+    .cargar_vector=cargar_vector};
 
 struct matriz_methods m_methods = {
     .alloc_matriz = alloc_matriz,
@@ -64,6 +66,29 @@ void print(o_vector p_vector)
 void free_vector(o_vector *p_vector)
 {
     free(p_vector->vector);
+}
+
+/**
+ * @brief Carga el vector cuyos valores se encuentran en el vector v separados
+ *  por un espacio en el vector.
+ * 
+ * @param size Tamaño del vector a cargar.
+ * @param vector Vector donde deben guardarse los valores leidos
+ * @param v Cadena de caracteres que contiene los valores del array separados por un espacio.
+ */
+void cargar_vector(o_vector* vector, char *v)
+{
+
+    char *token;
+
+    token = strtok(v, " ");
+    vector->vector[0] = atoi(token);
+
+    for (int i = 1; i < vector->size; i++)
+    {
+        token = strtok(NULL, " ");
+        vector->vector[i] = atoi(token);
+    }
 }
 
 /**

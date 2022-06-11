@@ -1,5 +1,5 @@
 all: 
-	gcc -g main.c rdp.c leerMatriz.c monitor.c cpuProcess.c politica.c dataStructures.c -lpthread
+	gcc -g main.c rdp.c monitor.c cpuProcess.c politica.c dataStructures.c -lpthread
 
 run:
 	./a.out

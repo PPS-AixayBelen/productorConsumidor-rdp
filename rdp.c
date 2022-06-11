@@ -1,5 +1,5 @@
 #include "rdp.h"
-#include "leerMatriz.h"
+//#include "leerMatriz.h"
 #include "time.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,7 +45,7 @@ extern int new_rdp(rdp_o *p_rdp)
     {
         return ALLOC_ERROR;
     }
-    cargar_vector(PLACES, p_rdp->M.vector, M);
+    p_rdp->M.v_methods->cargar_vector(&p_rdp->M, M);
     if (new_matriz(&p_rdp->Ineg, PLACES, TRANSITIONS) == ALLOC_ERROR)
     {
         return ALLOC_ERROR;

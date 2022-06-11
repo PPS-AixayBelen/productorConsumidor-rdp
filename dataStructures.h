@@ -1,8 +1,9 @@
 #ifndef _dataStructures_
 #define _dataStructures_
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #define ALLOC_ERROR -1
 #define ALLOC_OK 0
@@ -18,6 +19,7 @@ struct vector_methods
     void (*free_vector)(o_vector *);
     void (*print)(o_vector);
     int (*copy)(o_vector dst, o_vector src);
+    void (*cargar_vector)(o_vector* vector, char *v);
 };
 
 struct vector
