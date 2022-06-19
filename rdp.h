@@ -9,10 +9,11 @@
 #define PRODUCTOR 2
 #define CONSUMIDOR 3
 
+#define PACKET_NUMBER 50
 #define TRANSITIONS 4
 #define PLACES 7
 #define BUFFERS 2
-#define DEBUG 1
+#define DEBUG 0
 #define ERROR -5
 typedef struct rdp rdp_o;
 

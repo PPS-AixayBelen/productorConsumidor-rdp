@@ -32,7 +32,7 @@ struct rdp_metodos rdpMetodos = {
  */
 extern int new_rdp(rdp_o *p_rdp)
 {
-    p_rdp->dataNumber = 5;    // cant max de paquetes a generar
+    p_rdp->dataNumber = PACKET_NUMBER;    // cant max de paquetes a generar
     p_rdp->packetCounter = 0; // contador de paquetes generados hasta el momento por T0
 
     char M[] = "3 2 5 0 0 1 0"; // marcado inicial

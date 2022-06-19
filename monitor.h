@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include "rdp.h"
 #include "politica.h"
-#define TEST_INVARIANTS 1
+#define TEST_INVARIANTS 0
 
 typedef struct monitor monitor_o;
 

@@ -53,7 +53,8 @@ int verifyMInvariants(monitor_o *monitor)
 void cleanMonitor(monitor_o *monitor)
 {
     free(monitor->politica);
-    free(monitor->logInvTransicion);
+    if(TEST_INVARIANTS)
+        free(monitor->logInvTransicion);
 }
 
 /**
